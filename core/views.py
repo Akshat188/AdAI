@@ -41,19 +41,19 @@ class generate(APIView):
         
         return Response(status=200)  # Just for demonstration
 
-    class verify(APIView):    
-        @staticmethod
-        def post(request, phone):
-            try:
-                Mobile = Users.objects.get(Mobile=phone)
-            except ObjectDoesNotExist:
-                return Response("User does not exist", status=404)  # False Call
+class verify(APIView):    
+    @staticmethod
+    def post(request, phone):
+        try:
+            Mobile = Users.objects.get(Mobile=phone)
+        except ObjectDoesNotExist:
+            return Response("User does not exist", status=404)  # False Call
 
-            keygen = str(phone) + str(datetime.date(datetime.now()))
-            key = base64.b32encode(keygen.returnValue(phone).encode())  # Key is generated
-            OTP = pyotp.HOTP(key)  # HOTP Model for OTP is created
-            if OTP.verify(request.data["otp"], Mobile.counter):  # Verifying the OTP
-                Mobile.isVerified = True
-                Mobile.save()
-                return Response("You are authorised", status=200)
-            return Response("OTP is wrong", status=400)
+        keygen = str(phone) + str(datetime.date(datetime.now()))
+        key = base64.b32encode(keygen.returnValue(phone).encode())  # Key is generated
+        OTP = pyotp.HOTP(key)  # HOTP Model for OTP is created
+        if OTP.verify(request.data["otp"], Mobile.counter):  # Verifying the OTP
+            Mobile.isVerified = True
+            Mobile.save()
+            return Response("You are authorised", status=200)
+        return Response("OTP is wrong", status=400)
