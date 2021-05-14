@@ -9,14 +9,15 @@ import pyotp
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from twilio.rest import Client
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 class generate(APIView):
     # Get to Create a call for OTP
-    @staticmethod
-    def post(self,request):
+    def post(self,request,format=None):
+        print("hello")
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         phone = body['phone']
@@ -26,31 +27,30 @@ class generate(APIView):
             Users.objects.create(
                 phoneno=phone,
             )
-        Mobile = Users.objects.get(phone_number=phone)  # user Newly created Model
+        Mobile = Users.objects.get(phoneno=phone)  # user Newly created Model
         Mobile.counter +=1
         Mobile.save()
-        keygen = str(phone) + str(datetime.date(datetime.now()))
-        key = base64.b32encode(keygen.returnValue(phone).encode())  # Key is generated
+        key='base32secret3232'
         OTP = pyotp.HOTP(key)  # HOTP Model for OTP is created
         print(OTP.at(Mobile.counter))
-        # Using Multi-Threading send the OTP Using Messaging Services like Twilio or Fast2sms
+        #Using Multi-Threading send the OTP Using Messaging Services like Twilio or Fast2sms
         client = Client("ACb28e5eba5a6ae96f29d738f8f4e6cfb6","f40cef9eab1fae1bea9044fd8f4a9917")
-        client.messages.create(to="+17343597064", 
-                       from_=phone, 
+        client.messages.create(to=phone, 
+                       from_="+17343597064", 
                        body=str(OTP.at(Mobile.counter)))
         
-        return Response(status=200)  # Just for demonstration
+        return Response("Success") # Just for demonstration
 
 class verify(APIView):    
-    @staticmethod
-    def post(request, phone):
+    def post(self,request,format=None):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        phone = body['phone']
         try:
-            Mobile = Users.objects.get(Mobile=phone)
+            Mobile = Users.objects.get(phoneno=phone)
         except ObjectDoesNotExist:
             return Response("User does not exist", status=404)  # False Call
-
-        keygen = str(phone) + str(datetime.date(datetime.now()))
-        key = base64.b32encode(keygen.returnValue(phone).encode())  # Key is generated
+        key='base32secret3232'
         OTP = pyotp.HOTP(key)  # HOTP Model for OTP is created
         if OTP.verify(request.data["otp"], Mobile.counter):  # Verifying the OTP
             Mobile.isVerified = True

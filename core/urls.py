@@ -1,9 +1,9 @@
 from django.urls import path
 
-from . import views
+from .views import *
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('generate/',views.generate, name='generate'),
-    path('verify/',views.verify,name='verify'),
+    path('', index, name='index'),
+    path('generate/',generate.as_view(), name='generate'),
+    path('verify/',verify.as_view(),name='verify')
 ]
