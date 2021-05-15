@@ -36,12 +36,13 @@ class generate(APIView):
                         username=phone,
                         password=OTP.at(1),
             )
-            newuser.save()
+            
             #Using Multi-Threading send the OTP Using Messaging Services like Twilio or Fast2sms
             client = Client("ACb28e5eba5a6ae96f29d738f8f4e6cfb6","f40cef9eab1fae1bea9044fd8f4a9917")
             client.messages.create(to=phone, 
                         from_="+17343597064", 
                         body=str(OTP.at(1)))
+            newuser.save()
             Mobile = Users.objects.create(phoneno=phone,user=newuser)
             Mobile = Users.objects.get(phoneno=phone)  # user Newly created Model
             Mobile.counter +=1
