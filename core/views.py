@@ -25,6 +25,7 @@ class generate(APIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         phone = body['phone']
+        phone = str(phone)
         try:
             Mobile = Users.objects.get(phoneno=phone)  # if Mobile already exists the take this else create New One
         except Users.DoesNotExist:
