@@ -80,15 +80,18 @@ class generate(APIView):
         print(OTP.at(Mobile.counter))
         newuser = User(
                     username=phone,
-                    password=OTP.at(Mobile.counter),
+                    password="123456",
         )
         Mobile.user=newuser
         #Using Multi-Threading send the OTP Using Messaging Services like Twilio or Fast2sms
+<<<<<<< HEAD
         client = Client("ACb28e5eba5a6ae96f29d738f8f4e6cfb6","f40cef9eab1fae1bea9044fd8f4a9917")
         client.messages.create(to=phone, 
                        from_="+17343597064", 
                        body=str(OTP.at(Mobile.counter)))
         t.start()
+=======
+>>>>>>> 35acb47111317962a005d1357a787a246eafb630
         return Response("Success") # Just for demonstration
 
 class verify(APIView):    
