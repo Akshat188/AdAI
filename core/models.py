@@ -31,14 +31,14 @@ class UserFields(models.Model):
         (plan3,'plan3')
     ]
     username = models.ForeignKey(Users , to_field='phoneno',on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    full_name = models.CharField(max_length=30)
+    #last_name = models.CharField(max_length=30)
     business_name = models.CharField(max_length=30)
     business_address = models.CharField(max_length=50)
     business_type = models.CharField(max_length=2,choices=business_choice,default=type1)
     business_plan = models.CharField(max_length=2,choices=business_plan,default=plan1)
-    fb_id = models.CharField(max_length=30)
-    insta_id = models.CharField(max_length=30)
+    #fb_id = models.CharField(max_length=30)
+    #insta_id = models.CharField(max_length=30)
 
 class user_images(models.Model):
     image = models.ImageField(upload_to='images')
@@ -69,7 +69,8 @@ class customer(models.Model):
     name = models.CharField(max_length=30)
     contact = PhoneNumberField(blank=False,help_text='Contact phone number')
     status = models.BooleanField(blank=False, default=False)
-    business_id = models.ForeignKey(UserFields , to_field='id',on_delete=models.CASCADE)
+    owner = models.ForeignKey(Users , to_field='phoneno',on_delete=models.CASCADE)
+
 
 class sent_status(models.Model):
     business_id = models.ForeignKey(UserFields , to_field='id',on_delete=models.CASCADE)

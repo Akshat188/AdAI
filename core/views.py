@@ -21,6 +21,9 @@ from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 from twilio.rest import Client
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+
+from random import randint
 
 from threading import Timer
 # Create your views here.
@@ -30,12 +33,6 @@ def OTPtimer(Mobile):
     Mobile.counter +=1
     Mobile.save()
     
-
-def check(usr):
-    while(1):
-        print(usr.counter)
-        time.sleep(2)
-
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
@@ -69,7 +66,7 @@ class generate(APIView):
             Mobile = Users.objects.get(phoneno=phone)  # user Newly created Model
             Mobile.counter +=1
             Mobile.save()
-            return Response("Success") # Just for demonstration
+            return Response("Success",status=200) # Just for demonstration
 
             
         Mobile = Users.objects.get(phoneno=phone)  # user Newly created Model
@@ -84,15 +81,7 @@ class generate(APIView):
         )
         Mobile.user=newuser
         #Using Multi-Threading send the OTP Using Messaging Services like Twilio or Fast2sms
-<<<<<<< HEAD
-        client = Client("ACb28e5eba5a6ae96f29d738f8f4e6cfb6","f40cef9eab1fae1bea9044fd8f4a9917")
-        client.messages.create(to=phone, 
-                       from_="+17343597064", 
-                       body=str(OTP.at(Mobile.counter)))
-        t.start()
-=======
->>>>>>> 35acb47111317962a005d1357a787a246eafb630
-        return Response("Success") # Just for demonstration
+        return Response("Success",status=200) # Just for demonstration
 
 class verify(APIView):    
     def post(self,request,format=None):
@@ -118,6 +107,7 @@ class verify(APIView):
         return Response("OTP is wrong", status=400)
 
 class put_user_details(APIView):
+    permission_classes = (IsAuthenticated,)
     def post(self,request,format=None):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -126,18 +116,19 @@ class put_user_details(APIView):
         user = Users.objects.get(phoneno=phone)
         usr_detail = UserFields.objects.create(
             username = user,
-            first_name = body['fname'],
-            last_name = body['lname'],
+            full_name = body['fname'],
+            #last_name = body['lname'],
             business_name = body['bname'],
             business_address = body['b_addr'],
             business_type = body['b_type'],
             business_plan = body['b_plan'],
-            fb_id = body['fb_id'],
-            insta_id = body['insta_id'],
+            #fb_id = body['fb_id'],
+            #insta_id = body['insta_id'],
             )
-        return Response("Success")      
+        return Response("Success",status=200)      
 
 class get_user_details(APIView):
+    permission_classes = (IsAuthenticated,)
     def post(self,request,format=None):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -151,6 +142,7 @@ class get_user_details(APIView):
         return Response(data,status=200)
 
 class put_theme(APIView):
+    permission_classes = (IsAuthenticated,)
     def post(self,request,format=None):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -158,18 +150,20 @@ class put_theme(APIView):
             name = body['name'],
             business_type = body['b_type'],
             )
-        return Response("Success")
+        return Response("Success",status=200)
 
 class put_designer(APIView):
+    permission_classes = (IsAuthenticated,)
     def post(self,request,format=None):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         theme = designer.objects.create(
             username = body['name']
             )
-        return Response("Success")
+        return Response("Success",status=200)
 
 class get_designer(APIView):
+    permission_classes = (IsAuthenticated,)
     def post(self,request,format=None):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
@@ -181,31 +175,10 @@ class get_designer(APIView):
         data = serializers.serialize( "json",  Mobile  )
         return Response(data,status=200)
 
-class put_customer(APIView):
-    def post(self,request,format=None):
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        userfield = UserFields.objects.get(id=body['b_id'])
-        custom = customer.objects.create(
-            name = body['name'],
-            contact = body['contact'],
-            business_id = userfield
-            )
-        return Response("Success")
 
-class get_customer(APIView):
-    def post(self,request,format=None):
-        body_unicode = request.body.decode('utf-8')
-        body = json.loads(body_unicode)
-        name = body['name']
-        try:
-            Mobile = customer.objects.filter(name=name)
-        except ObjectDoesNotExist:
-            return Response("User does not exist", status=404)  # False Call  
-        data = serializers.serialize( "json",  Mobile  )
-        return Response(data,status=200)
 
 class put_user_images(APIView):
+    permission_classes = (IsAuthenticated,)
     parser_classes = (MultiPartParser, FormParser,FileUploadParser, )
 
     def post(self,request,format=None):
@@ -218,6 +191,7 @@ class put_user_images(APIView):
         return Response({"mode": img.mode, "size": img.size, "format": img.format})
 
 class put_images(APIView):
+    permission_classes = (IsAuthenticated,)
     parser_classes = (MultiPartParser, FormParser,FileUploadParser, )
 
     def post(self,request,format=None):
@@ -232,6 +206,7 @@ class put_images(APIView):
         return Response({"mode": img.mode, "size": img.size, "format": img.format})
 
 class get_user_images(APIView):
+    permission_classes = (IsAuthenticated,)
     def post(self,request,format=None):
         usr = Users.objects.get(phoneno=request.data['user'])
         images = user_images.objects.filter(user=usr)
@@ -242,11 +217,50 @@ class get_user_images(APIView):
             with open(path, "rb") as image_file:
                 image_data = base64.b64encode(image_file.read()).decode('utf-8')
                 img_arr.append(image_data)
-        return Response(img_arr)
+        return Response(img_arr,status=200)
 
 class testapi(APIView):
+    permission_classes = (IsAuthenticated,)
     def post(self,request,format=None):
         usr = Users.objects.get(phoneno=request.data['user'])
         OTPtimer(usr)
         check(usr)
-        return Response("succ")
+        return Response("success",status=200)
+
+class put_customer(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self,request,format=None):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        own = Users.objects.get(phoneno=request.data['owner'])
+        custom = customer.objects.create(
+            name = body['name'],
+            contact = body['contact'],
+            owner = own
+            )
+        return Response("Success",status=200)
+
+class get_customer(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self,request,format=None):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        usr = Users.objects.get(phoneno=request.data['user'])
+        customers = customer.objects.filter(owner=usr)
+        data =[]
+        for cust in customers:
+            data.append(serializers.serialize( "json",  cust  ))
+        return Response(data,status=200)
+
+class random_photo(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self,request,format=None):
+        usr = Users.objects.get(phoneno=request.data['user'])
+        images = user_images.objects.filter(user=usr)
+        random_index = randint(0, images.count() - 1)
+        img = images[random_index]
+        path = root + str(img.image)
+        with open(path, "rb") as image_file:
+            image_data = base64.b64encode(image_file.read()).decode('utf-8')
+            return Response(image_data,status=200)
+
