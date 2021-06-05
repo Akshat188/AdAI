@@ -16,5 +16,8 @@ urlpatterns = [
      path('put_user_images/',put_user_images.as_view(),name='put_user_images'),
      path('put_images/',put_images.as_view(),name='put_images'),
      path('get_user_images/',get_user_images.as_view(),name='get_user_images'),
-     path('testapi/',testapi.as_view(),name='testapi')
+     path('testapi/',testapi.as_view(),name='testapi'),
+     path('random_photo/',random_photo.as_view(),name='random_photo'),
+     path('update_user_details/',update_user_details.as_view(),name='update_user_details'),
+     path('get_posters/',get_posters.as_view(),name='get_posters')
 ]

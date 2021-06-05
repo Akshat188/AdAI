@@ -36,7 +36,7 @@ class UserFields(models.Model):
     business_name = models.CharField(max_length=30)
     business_address = models.CharField(max_length=50)
     business_type = models.CharField(max_length=2,choices=business_choice,default=type1)
-    business_plan = models.CharField(max_length=2,choices=business_plan,default=plan1)
+    business_phone = PhoneNumberField(blank=False,help_text='Contact phone number')
     #fb_id = models.CharField(max_length=30)
     #insta_id = models.CharField(max_length=30)
 
