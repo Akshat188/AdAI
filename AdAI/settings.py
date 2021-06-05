@@ -26,9 +26,9 @@ SECRET_KEY = 'jdtw_zhl(%1uxn-m6^)bj2v=ds471118^q%&r4j)cxf=aq%+dd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['adaiapp.herokuapp.com','127.0.0.1']
+ALLOWED_HOSTS = ['adaiapp.herokuapp.com','127.0.0.1','13.233.224.41']
 
-
+                                                           
 # Application definition
 
 INSTALLED_APPS = [
