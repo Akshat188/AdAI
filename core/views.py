@@ -105,8 +105,14 @@ class verify(APIView):
             token, created = Token.objects.get_or_create(user=user)
             data={}
             data['token']=token.key
-            #token = Token.objects.create(user=)
+            try:
+                Mobile2 = UserFields.objects.get(username=phone)
+            except ObjectDoesNotExist:
+                data['details_filled']=False
+                return Response(data,status=200)   
+            data['details_filled']=True 
             return Response(data,status=200)
+
         
         return Response("OTP is wrong", status=400)
 
